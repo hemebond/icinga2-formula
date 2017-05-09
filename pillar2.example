@@ -1,0 +1,330 @@
+#
+# Hosts
+#
+hosts:
+  generic-host:
+    template: true
+    check_interval: 1m
+    retry_interval: 30s
+    max_check_attempts: 3
+    check_command: hostalive
+
+  NodeName:
+    import:
+      - generic-host
+    address: 127.0.0.1
+    address6: ::1
+    vars:
+      os: Linux
+      http_vhosts:
+        http:
+          http_uri: /
+      disks:
+        disk: {}
+        'disk /':
+          disk_partition: /
+      notification:
+        mail:
+          groups:
+            - icingaadmins
+
+#
+# Host Groups
+#
+hostgroups:
+  linux-servers:
+    display_name: Linux Servers
+    assign:
+      - host.vars.os == Linux
+  windows-servers:
+    display_name: Windows Servers
+    assign:
+      - host.vars.os == Windows
+
+#
+# Services
+#
+services:
+  generic-service:
+    template: true
+    check_interval: 1m
+    retry_interval: 30s
+    max_check_attempts: 5
+
+  ping4:
+    apply: true
+    import:
+      - generic-service
+    check_command: ping4
+    assign:
+      - host.address
+
+  ping6:
+    apply: true
+    import:
+      - generic-service
+    check_command: ping6
+    assign:
+      - host.address6
+
+  ssh:
+    apply: true
+    import:
+      - generic-service
+    check_command: ssh
+    assign:
+      - (host.address || host.address6) && host.vars.os == Linux
+
+  http:
+    apply: vhost => config in host.vars.http_vhosts
+    import:
+      - generic-service
+    check_command: http
+    vars: vars + config
+
+  disk:
+    apply: fs => config in host.vars.disks
+    import:
+      - generic-service
+    check_command: disk
+    vars: vars + config
+
+  icinga:
+    apply: true
+    import:
+      - generic-service
+    check_command: icinga
+    assign:
+      - host.name == NodeName
+
+  load:
+    apply: true
+    import:
+      - generic-service
+    check_command: load
+    vars:
+      backup_downtime: 02:00-03:00
+    assign:
+      - host.name == NodeName
+
+  procs:
+    apply: true
+    import:
+      - generic-service
+    check_command: procs
+    assign:
+      - host.name == NodeName
+
+  swap:
+    apply: true
+    import:
+      - generic-service
+    check_command: swap
+    assign:
+      - host.name == NodeName
+
+  users:
+    apply: true
+    import:
+      - generic-service
+    check_command: users
+    assign:
+      - host.name == NodeName
+
+#
+# Service Groups
+#
+servicegroups:
+  ping:
+    display_name: Ping Checks
+    assign:
+      - match(ping*, service.check_command)
+
+  http:
+    display_name: HTTP Checks
+    assign:
+      - match(http*, service.check_command)
+
+  disk:
+    display_name: Disk Checks
+    assign:
+      - match(disk*, service.check_command)
+
+#
+# Scheduled Downtime
+#
+scheduleddowntimes:
+  backup-downtime:
+    apply: true
+    apply_target: Service
+    author: icingaadmin
+    comment: Scheduled downtime for backup
+    ranges:
+      monday: service.vars.backup_downtime
+      tuesday: service.vars.backup_downtime
+      wednesday: service.vars.backup_downtime
+      thursday: service.vars.backup_downtime
+      friday: service.vars.backup_downtime
+      saturday: service.vars.backup_downtime
+      sunday: service.vars.backup_downtime
+    assign:
+      - service.vars.backup_downtime
+
+#
+# Users
+#
+users:
+  generic-user:
+    template: true
+
+  icingaadmin:
+    import:
+      - generic-user
+    display_name: Icinga 2 Admin
+    groups:
+      - icingaadmins
+    email: icinga@localhost
+
+#
+# User Groups
+#
+usergroups:
+  icingaadmins:
+    display_name: Icinga 2 Admin Group
+
+#
+# Notification Commands
+#
+notificationcommands:
+  mail-host-notification:
+    command:
+      - SysconfDir + /icinga2/scripts/mail-host-notification.sh
+    env:
+      NOTIFICATIONTYPE: $notification.type$
+      HOSTALIAS: $host.display_name$
+      HOSTADDRESS: $address$
+      HOSTSTATE: $host.state$
+      LONGDATETIME: $icinga.long_date_time$
+      HOSTOUTPUT: $host.output$
+      NOTIFICATIONAUTHORNAME: $notification.author$
+      NOTIFICATIONCOMMENT: $notification.comment$
+      HOSTDISPLAYNAME: $host.display_name$
+      USEREMAIL: $user.email$
+
+  mail-service-notification:
+    command:
+      - SysconfDir + /icinga2/scripts/mail-service-notification.sh
+    env:
+      NOTIFICATIONTYPE: $notification.type$
+      SERVICEDESC: $service.name$
+      HOSTALIAS: $host.display_name$
+      HOSTADDRESS: $address$
+      SERVICESTATE: $service.state$
+      LONGDATETIME: $icinga.long_date_time$
+      SERVICEOUTPUT: $service.output$
+      NOTIFICATIONAUTHORNAME: $notification.author$
+      NOTIFICATIONCOMMENT: $notification.comment$
+      HOSTDISPLAYNAME: $host.display_name$
+      SERVICEDISPLAYNAME: $service.display_name$
+      USEREMAIL: $user.email$
+
+#
+# Notifications
+#
+notifications:
+  mail-host-notification:
+    template: true
+    command: mail-host-notification
+    states:
+      - Up
+      - Down
+    types:
+      - Problem
+      - Acknowledgement
+      - Recovery
+      - Custom
+      - FlappingStart
+      - FlappingEnd
+      - DowntimeStart
+      - DowntimeEnd
+      - DowntimeRemoved
+    period: 24x7
+
+  mail-service-notification:
+    template: true
+    command: mail-service-notification
+    states:
+      - OK
+      - Warning
+      - Critical
+      - Unknown
+    types:
+      - Problem
+      - Acknowledgement
+      - Recovery
+      - Custom
+      - FlappingStart
+      - FlappingEnd
+      - DowntimeStart
+      - DowntimeEnd
+      - DowntimeRemoved
+    period: 24x7
+
+  mail-host-icingaadmin:
+    notification_name: mail-icingaadmin
+    apply: true
+    apply_target: Host
+    import:
+      - mail-host-notification
+    user_groups:
+      - host.vars.notification.mail.groups
+    users: host.vars.notification.mail.users
+    assign:
+      - host.vars.notification.mail
+
+  mail-service-icingaadmin:
+    notification_name: mail-icingaadmin
+    apply: true
+    apply_target: Service
+    import:
+      - mail-service-notification
+    user_groups: host.vars.notification.mail.groups
+    users: host.vars.notification.mail.users
+    assign:
+      - host.vars.notification.mail
+
+#
+# Time Periods
+#
+timeperiods:
+  24x7:
+    import:
+      - legacy-timeperiod
+    display_name: Icinga 2 24x7 TimePeriod
+    ranges:
+      monday: '00:00-24:00'
+      tuesday: '00:00-24:00'
+      wednesday: '00:00-24:00'
+      thursday: '00:00-24:00'
+      friday: '00:00-24:00'
+      saturday: '00:00-24:00'
+      sunday: '00:00-24:00'
+
+  9to5:
+    import:
+      - legacy-timeperiod
+    display_name: Icinga 2 9to5 TimePeriod
+    ranges:
+      monday: '00:09-17:00'
+      tuesday: '00:09-17:00'
+      wednesday: '00:09-17:00'
+      thursday: '00:09-17:00'
+      friday: '00:09-17:00'
+      saturday: '00:09-17:00'
+      sunday: '00:09-17:00'
+
+  never:
+    import:
+      - legacy-timeperiod
+    display_name: Icinga 2 never TimePeriod
+    ranges: {}

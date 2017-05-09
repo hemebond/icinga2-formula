@@ -1,19 +1,129 @@
-{% set icinga2 = salt['grains.filter_by']({
-    'Debian': {
-        'classicui': {
-            'users': {}
-        },
-        'conf': {},
-        'nrpe': {},
-        'pkgs': []
-    },
-    'Ubuntu': {
-        'classicui': {
-            'users': {}
-        },
-        'conf': {},
-        'nrpe': {},
-        'pkgs': []
-    },
+{%- set libdir = 'lib64' if salt['grains.get']('cpuarch') == 'x86_64' else 'lib' %}
 
+{%- set icinga2_os_settings = salt['grains.filter_by']({
+  'Debian': {
+    'user':    'nagios',
+    'group':   'nagios',
+    'lib_dir': '/usr/lib',
+    'web': {
+      'user': 'www-data',
+      'group': 'icingaweb2'
+    }
+  },
+
+  'RedHat': {
+    'user':                 'icinga',
+    'group':                'icinga',
+    'lib_dir':              '/usr/{{ libdir }}',
+    'constants': {
+      'PluginDir':          '/usr/{{ libdir }}/nagios/plugins',
+      'PluginContribDir':   '/usr/{{ libdir }}/nagios/plugins',
+      'ManubulonPluginDir': '/usr/{{ libdir }}/nagios/plugins',
+    }
+  },
+
+  'Suse': {
+    'user':                 'icinga',
+    'group':                'icinga',
+    'lib_dir':              '/usr/{{ libdir }}',
+    'constants': {
+      'PluginDir':          '/usr/{{ libdir }}/nagios/plugins',
+      'PluginContribDir':   '/usr/{{ libdir }}/nagios/plugins',
+      'ManubulonPluginDir': '/usr/{{ libdir }}/nagios/plugins',
+    }
+  }
 }, merge=salt['pillar.get']('icinga2:lookup')) %}
+
+{%- set icinga2_kernel_settings = salt['grains.filter_by']({
+  'Linux': {
+    'package':           'icinga2',
+    'service':           'icinga2',
+    'conf_dir':          '/etc/icinga2',
+    'log_dir':           '/var/log/icinga2',
+    'run_dir':           '/var/run/icinga2',
+    'spool_dir':         '/var/spool/icinga2',
+    'cache_dir':         '/var/cache/icinga2',
+    'pki_dir':           '/etc/icinga2/pki',
+    'ca_dir':            '/var/lib/icinga2/ca',
+    'ido_pgsql_package': 'icinga2-ido-pgsql',
+    'ido_mysql_package': 'icinga2-ido-mysql',
+    'plugins': [
+      'itl',
+      'plugins'
+    ],
+    'features': {},
+    'constants': {
+      'PluginDir':          '/usr/lib/nagios/plugins',
+      'PluginContribDir':   '/usr/lib/nagios/plugins',
+      'ManubulonPluginDir': '/usr/lib/nagios/plugins',
+      'ZoneName':           salt['grains.get']('fqdn'),
+      'NodeName':           salt['grains.get']('fqdn'),
+      'TicketSalt':         '',
+    }
+  },
+  'Windows': {
+    'user':              'SYSTEM',
+    'group':             '',
+    'conf_dir':          'C:/ProgramData/icinga2/etc/icinga2',
+    'log_dir':           'C:/ProgramData/icinga2/var/log/icinga2',
+    'run_dir':           'C:/ProgramData/icinga2/var/run/icinga2',
+    'spool_dir':         'C:/ProgramData/icinga2/var/spool/icinga2',
+    'cache_dir':         'C:/ProgramData/icinga2/var/cache/icinga2',
+    'pki_dir':           'C:/ProgramData/icinga2/etc/icinga2/pki',
+    'ca_dir':            'C:/ProgramData/icinga2/var/lib/icinga2/ca',
+    'ido_pgsql_package': '',
+    'ido_mysql_package': '',
+    'service_reload':    '',
+    'constants': {
+      'PluginDir':          'C:/Program Files/ICINGA2/sbin',
+      'PluginContribDir':   'C:/Program Files/ICINGA2/sbin',
+      'ManubulonPluginDir': 'C:/Program Files/ICINGA2/sbin',
+      'ZoneName':           salt['grains.get']('fqdn'),
+      'NodeName':           salt['grains.get']('fqdn'),
+      'TicketSalt':         '',
+    }
+  }
+}, grain='kernel', merge=icinga2_os_settings) %}
+
+{%- set icinga2 = salt['defaults.merge']({
+  'web': {
+    'users': {
+      'admin': '$1$PcNxaDqe$4CzgfB.ud.XE.jg37hBXv/',
+    },
+    'authentication': {
+      'icingaweb2': {
+        'backend': 'db',
+        'resource': 'icingaweb_db'
+      }
+    },
+    'config': {
+      'global': {
+        'show_stacktraces': 1,
+        'config_backend': 'db',
+        'config_resource': 'icingaweb_db',
+      },
+      'logging': {
+        'log': 'syslog',
+        'level': 'ERROR',
+        'application': 'icingaweb2'
+      }
+    },
+    'groups': {
+      'icingaweb2': {
+        'backend': 'db',
+        'resource': 'icingaweb_db'
+      }
+    },
+    'roles': {
+      'Administrators': {
+        'users': [
+          'admin'
+        ],
+        'permissions': '*',
+        'groups': [
+          'Administrators'
+        ]
+      }
+    }
+  }
+}, icinga2_kernel_settings) %}
