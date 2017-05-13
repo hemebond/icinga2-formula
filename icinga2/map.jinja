@@ -1,40 +1,6 @@
 {%- set libdir = 'lib64' if salt['grains.get']('cpuarch') == 'x86_64' else 'lib' %}
 
-{%- set icinga2_os_settings = salt['grains.filter_by']({
-  'Debian': {
-    'user':    'nagios',
-    'group':   'nagios',
-    'lib_dir': '/usr/lib',
-    'web': {
-      'user': 'www-data',
-      'group': 'icingaweb2'
-    }
-  },
-
-  'RedHat': {
-    'user':                 'icinga',
-    'group':                'icinga',
-    'lib_dir':              '/usr/{{ libdir }}',
-    'constants': {
-      'PluginDir':          '/usr/{{ libdir }}/nagios/plugins',
-      'PluginContribDir':   '/usr/{{ libdir }}/nagios/plugins',
-      'ManubulonPluginDir': '/usr/{{ libdir }}/nagios/plugins',
-    }
-  },
-
-  'Suse': {
-    'user':                 'icinga',
-    'group':                'icinga',
-    'lib_dir':              '/usr/{{ libdir }}',
-    'constants': {
-      'PluginDir':          '/usr/{{ libdir }}/nagios/plugins',
-      'PluginContribDir':   '/usr/{{ libdir }}/nagios/plugins',
-      'ManubulonPluginDir': '/usr/{{ libdir }}/nagios/plugins',
-    }
-  }
-}, merge=salt['pillar.get']('icinga2:lookup')) %}
-
-{%- set icinga2_kernel_settings = salt['grains.filter_by']({
+{%- set kernel = salt['grains.filter_by']({
   'Linux': {
     'package':           'icinga2',
     'service':           'icinga2',
@@ -83,9 +49,43 @@
       'TicketSalt':         '',
     }
   }
-}, grain='kernel', merge=icinga2_os_settings) %}
+}, grain='kernel') %}
 
-{%- set icinga2 = salt['defaults.merge']({
+{%- set os = salt['grains.filter_by']({
+  'Debian': {
+    'user':    'nagios',
+    'group':   'nagios',
+    'lib_dir': '/usr/lib',
+    'web': {
+      'user': 'www-data',
+      'group': 'icingaweb2'
+    }
+  },
+
+  'RedHat': {
+    'user':                 'icinga',
+    'group':                'icinga',
+    'lib_dir':              '/usr/{{ libdir }}',
+    'constants': {
+      'PluginDir':          '/usr/{{ libdir }}/nagios/plugins',
+      'PluginContribDir':   '/usr/{{ libdir }}/nagios/plugins',
+      'ManubulonPluginDir': '/usr/{{ libdir }}/nagios/plugins',
+    }
+  },
+
+  'Suse': {
+    'user':                 'icinga',
+    'group':                'icinga',
+    'lib_dir':              '/usr/{{ libdir }}',
+    'constants': {
+      'PluginDir':          '/usr/{{ libdir }}/nagios/plugins',
+      'PluginContribDir':   '/usr/{{ libdir }}/nagios/plugins',
+      'ManubulonPluginDir': '/usr/{{ libdir }}/nagios/plugins',
+    }
+  }
+}, merge=kernel) %}
+
+{%- set defaults = salt['defaults.merge']({
   'web': {
     'users': {
       'admin': '$1$PcNxaDqe$4CzgfB.ud.XE.jg37hBXv/',
@@ -126,4 +126,6 @@
       }
     }
   }
-}, icinga2_kernel_settings) %}
+}, os) %}
+
+{%- set icinga2 = salt['defaults.merge'](defaults, salt['pillar.get']('icinga2:lookup')) %}

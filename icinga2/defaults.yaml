@@ -363,64 +363,11 @@ conf:
         os: Linux
         sla: 24x7
 
-      services:
-        apt:
-          import:
-            - generic-service
-          check_command: apt
+  zone:
+    ZoneName:
+      endpoints:
+        - NodeName
 
-        disk:
-          import:
-            - generic-service
-          check_command: disk
-          vars:
-            sla: 24x7
-
-        http:
-          import:
-            - generic-service
-          check_command: http
-          vars:
-            sla: 24x7
-
-        icinga:
-          import:
-            - generic-service
-          check_command: icinga
-          vars:
-            sla: 24x7
-
-        load:
-          import:
-            - generic-service
-          check_command: load
-          vars:
-            sla: 24x7
-
-        procs:
-          import:
-            - generic-service
-          check_command: procs
-          vars:
-            sla: 24x7
-
-        ssh:
-          import:
-            - generic-service
-          check_command: ssh
-          vars:
-            sla: 24x7
-
-        swap:
-          import:
-            - generic-service
-          check_command: swap
-          vars:
-            sla: 24x7
-
-        users:
-          import:
-            - generic-service
-          check_command: users
-          vars:
-            sla: 24x7
+  endpoint:
+    NodeName:
+        host: NodeName
