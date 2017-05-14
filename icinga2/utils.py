@@ -50,7 +50,7 @@ def attributes(attrs, global_vars, consts, indent=1):
 		result = ''
 
 		# scan function
-		m = re.search('^\{{2}(.+)\}{2}$', str(row))
+		m = re.search('^\{{2}(.+)\}{2}$', str(row), re.S)
 		if m:
 			_1 = m.groups()[0]
 			result += "{{%s}}" % _1
