@@ -19,14 +19,21 @@ Available states
 ``icinga2``
 -----------
 
-Installs and configures the icinga2 package.
+* Configure icinga2 repo
+* Install icinga2 package
+* Configure Icinga2 with a set of defaults
+* Run icinga service
 
-``icinga2.classicui``
----------------------
+``icinga2.node``
+----------------
 
-Installs and configures the icinga2 package and configures the classicui.
+* Run pki node
+* Run config
+* Run features
 
-``icinga2.nrpe-server``
------------------------
+``icinga2.master``
+------------------
 
-Installs and configures the nrpe-server to perform checks on non-local hosts.
+* Run pki master
+* Run config
+* Run features

@@ -71,8 +71,8 @@ icinga2_globals = [
 def run():
 	config = {}
 
-	pth = __salt__.cp.cache_file("salt://icinga2/utils.py")
-	m = imp.load_source('icinga2salt', pth)
+	utils_module_path = __salt__.cp.cache_file("salt://icinga2/utils.py")
+	utils = imp.load_source('icinga2_utils', utils_module_path)
 
 	# Add support for the `do` jinja tag
 	jinja_env = Environment(extensions=['jinja2.ext.do'])
@@ -81,17 +81,17 @@ def run():
 	osmap_file = __salt__.cp.cache_file("salt://icinga2/map.jinja")
 	osmap_tpl = jinja_env.from_string(open(osmap_file, 'r').read())
 	osmap_mod = osmap_tpl.make_module(vars={'salt': __salt__})
-	osmap = osmap_mod.icinga2
+	icinga2 = osmap_mod.icinga2
 
 	if "conf" in osmap:
-		configuration = osmap['conf']
+		configuration = icinga2['conf']
 	else:
 		# Render the defaults.jinja file to get default configuration items
 		defaults_file = __salt__.cp.cache_file("salt://icinga2/defaults.yaml")
 		with open(defaults_file, 'r') as stream:
 			configuration = yaml.load(stream)
 
-	icinga2_constants = osmap['constants'].copy()
+	icinga2_constants = icinga2['constants'].copy()
 
 	# This defines in which file we want to store each object type
 	object_file_map = {
@@ -121,7 +121,7 @@ def run():
 		for obj_name, obj_info in obj_definitions.iteritems():
 			try:
 				obj_function_name = 'icinga2_object_%s' % obj_type
-				obj_function = getattr(m, obj_function_name)
+				obj_function = getattr(utils, obj_function_name)
 				definition = obj_function(obj_name, obj_info, icinga2_globals, icinga2_constants) + "\n\n"
 
 				if obj_info.get('template', False):
@@ -136,10 +136,10 @@ def run():
 
 	# Create the states for each file
 	for filename, definitions in compiled_object_definitions.iteritems():
-		config[osmap['conf_dir'] + filename] = {
+		config[icinga2['conf_dir'] + filename] = {
 			'file.managed': [
-				{'user': osmap['user']},
-				{'group': osmap['group']},
+				{'user': icinga2['user']},
+				{'group': icinga2['group']},
 				{'mode': 600},
 				{'contents': definitions},
 				{'watch_in': {

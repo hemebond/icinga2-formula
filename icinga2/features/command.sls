@@ -1,7 +1,7 @@
 include:
   - icinga2
 
-enable_command_feature:
+icinga2_command_enable:
   cmd.run:
     - name: icinga2 feature enable command
     - watch_in:

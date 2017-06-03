@@ -7,7 +7,7 @@ icinga2-ido-pgsql:
     - watch_in:
       - service: icinga2
 
-enable_ido:
+icinga2_ido_enable:
   cmd.run:
     - name: icinga2 feature enable ido-pgsql
     - require:

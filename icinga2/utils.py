@@ -56,7 +56,7 @@ def attributes(attrs, global_vars, consts, indent=1):
 			result += "{{%s}}" % _1
 		else:
 			# scan expression + function (function should contain expressions, but we donno parse it)
-			m = re.search('^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$', str(row))
+			m = re.search('^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$', str(row), re.S)
 			if m:
 				_1, _2, _3 = m.groups()
 				result += "%s %s {{%s}}" % (parse(_1), _2, _3)
