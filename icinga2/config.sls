@@ -13,10 +13,10 @@ def run():
 	jinja_env = Environment(extensions=['jinja2.ext.do'])
 
 	# Fetch and render the map file for OS settings
-	osmap_file = __salt__.cp.cache_file("salt://icinga2/map.jinja")
-	osmap_tpl = jinja_env.from_string(open(osmap_file, 'r').read())
-	osmap_mod = osmap_tpl.make_module(vars={'salt': __salt__})
-	icinga2 = osmap_mod.icinga2
+	map_file = __salt__.cp.cache_file("salt://icinga2/map.jinja")
+	map_tpl = jinja_env.from_string(open(map_file, 'r').read())
+	map_mod = map_tpl.make_module(vars={'salt': __salt__})
+	icinga2 = map_mod.icinga2
 
 	# Prefix each key in the constants dict with "const "
 	prefixed_constants = {'const {}'.format(k):v for k, v in icinga2['constants'].iteritems()}
@@ -26,7 +26,10 @@ def run():
 			{'user': icinga2['user']},
 			{'group': icinga2['group']},
 			{'mode': 600},
-			{'contents': m.icinga2_attributes([prefixed_constants])}
+			{'contents': utils.icinga2_attributes([prefixed_constants])},
+			{'require': [
+				{'pkg': 'icinga2_pkg'}
+			]},
 		]
 	}
 
@@ -40,8 +43,11 @@ def run():
 			{'context': {
 				'icinga2': icinga2
 			}},
+			{'require': [
+				{'pkg': 'icinga2_pkg'}
+			]},
 			{'watch_in': {
-				'service': 'icinga2'
+				'service': 'icinga2_service'
 			}}
 		]
 	}

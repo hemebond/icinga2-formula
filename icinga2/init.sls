@@ -8,6 +8,9 @@ include:
 {%- elif 'ido_mysql' in icinga2.features %}
   - icinga2.features.db-ido-mysql
 {%- endif %}
+{%- if 'api' in icinga2.features %}
+  - icinga2.features.api
+{%- endif %}
 
 
 {%- if grains['os'] == 'Debian' %}

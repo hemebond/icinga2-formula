@@ -5,7 +5,7 @@
 icinga2-ido-pgsql:
   pkg.installed:
     - watch_in:
-      - service: icinga2
+      - service: icinga2_service
 
 icinga2_ido_enable:
   cmd.run:
@@ -13,7 +13,7 @@ icinga2_ido_enable:
     - require:
       - pkg: icinga2-ido-pgsql
     - watch_in:
-      - service: icinga2
+      - service: icinga2_service
     - unless: icinga2 feature list | grep Enabled | grep ido-pgsql
 
 /etc/icinga2/features-available/ido-pgsql.conf:

@@ -300,7 +300,7 @@ def icinga2_object_apiuser(name, p, icinga2_globals, icinga2_constants):
 		'permissions': p.get('permissions'),
 	}
 
-	return icinga2.icinga2_object({
+	return icinga2_object({
 		'object_name': name,
 		'object_type': 'ApiUser',
 		'attrs': dict((x, y) for x, y in attrs.iteritems() if y is not None),

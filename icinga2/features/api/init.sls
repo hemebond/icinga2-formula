@@ -5,7 +5,7 @@ include:
 
 icinga2_api_conf:
   file.managed:
-    - name: {{ conf_dir }}/features-available/api.conf
+    - name: {{ icinga2.conf_dir }}/features-available/api.conf
     - source: salt://icinga2/features/api/api.conf.jinja
     - template: jinja
     - user: {{icinga2.user}}
@@ -14,9 +14,16 @@ icinga2_api_conf:
       - pkg: icinga2_pkg
 
 
+# icinga2_api_enable:
+#   cmd.run:
+#     - name: icinga2 feature enable api
+#     - watch_in:
+#       - service: icinga2_service
+#     - unless: icinga2 feature list | grep Enabled | grep -w api
+
 icinga2_api_enable:
   cmd.run:
-    - name: icinga2 feature enable api
+    - name: icinga2 api setup
     - watch_in:
-      - service: icinga2
+      - service: icinga2_service
     - unless: icinga2 feature list | grep Enabled | grep -w api

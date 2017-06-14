@@ -78,12 +78,12 @@ def run():
 	jinja_env = Environment(extensions=['jinja2.ext.do'])
 
 	# Fetch and render the map file for OS settings
-	osmap_file = __salt__.cp.cache_file("salt://icinga2/map.jinja")
-	osmap_tpl = jinja_env.from_string(open(osmap_file, 'r').read())
-	osmap_mod = osmap_tpl.make_module(vars={'salt': __salt__})
-	icinga2 = osmap_mod.icinga2
+	map_file = __salt__.cp.cache_file("salt://icinga2/map.jinja")
+	map_tpl = jinja_env.from_string(open(map_file, 'r').read())
+	map_mod = map_tpl.make_module(vars={'salt': __salt__})
+	icinga2 = map_mod.icinga2
 
-	if "conf" in osmap:
+	if "conf" in icinga2:
 		configuration = icinga2['conf']
 	else:
 		# Render the defaults.jinja file to get default configuration items
@@ -143,7 +143,7 @@ def run():
 				{'mode': 600},
 				{'contents': definitions},
 				{'watch_in': {
-					'service': 'icinga2-reload'
+					'service': 'icinga2_reload'
 				}}
 			]
 		}

@@ -11,7 +11,7 @@ icinga2_ido_enable:
     - require:
       - pkg: icinga2-ido-mysql
     - watch_in:
-      - service: icinga2
+      - service: icinga2_service
     - unless: icinga2 feature list | grep Enabled | grep ido-mysql
 
 /etc/icinga2/features-available/ido-mysql.conf:
