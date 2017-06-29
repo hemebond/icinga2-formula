@@ -151,9 +151,9 @@ def attributes(attrs, global_vars, consts, indent=1):
 		else:
 			if isinstance(value, dict):
 				if attr == 'vars':
-					config += process_dict(value, indent+1, 1, "%s%s." % ("\t" * indent, attr))
+					config += process_dict(value, indent+1, 1, "%s%s." % ("\t"*indent, attr))
 				else:
-					config += "%s%s = {\n%s%s}\n" % ("\t" * indent, attr, process_dict(value, indent+1), "\t" * indent)
+					config += "%s%s += {\n%s%s}\n" % ("\t"*indent, attr, process_dict(value, indent+1), "\t"*indent)
 			elif isinstance(value, list):
 				config += "%s%s = [ %s]\n" % ("\t" * indent, attr, process_list(value))
 			else:
@@ -644,7 +644,7 @@ def icinga2_object_service(name, p, icinga2_globals, icinga2_constants):
 		'attrs_list':   attrs.keys(),
 		'ignore':       p.get('ignore', []),
 		'import':       p.get('import', []),
-		'object_name':  name,
+		'object_name':  p.get('name', name),
 		'object_type':  'Service',
 		'prefix':       p.get('prefix', False),
 		'template':     p.get('template', False),
