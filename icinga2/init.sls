@@ -18,7 +18,7 @@ include:
 icinga2_repo:
   pkgrepo.managed:
     - humanname: Official Icinga2 package repository
-    - name: deb http://packages.icinga.org/debian/ icinga-{{ salt['grains.get']('oscodename') }} main
+    - name: deb http://packages.icinga.org/debian icinga-{{ salt['grains.get']('oscodename') }} main
     - key_url: http://packages.icinga.com/icinga.key
 {%- elif grains['os'] == 'Ubuntu' %}
 icinga2_repo:
@@ -33,13 +33,13 @@ icinga2_repo:
 
 icinga2_pkg:
   pkg.installed:
-    - name: icinga2
+    - name: {{ icinga2.package }}
     - require:
       - pkgrepo: icinga2_repo
 
 icinga2_service:
   service.running:
-    - name: icinga2
+    - name: {{ icinga2.service }}
     - enable: True
     - reload: True
     - require:
@@ -49,7 +49,7 @@ icinga2_service:
 # the service when an object definition file changes
 icinga2_reload:
   service.running:
-    - name: icinga2
+    - name: {{ icinga2.service }}
     - reload: True
     - require:
       - pkg: icinga2_pkg
