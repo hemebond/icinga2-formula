@@ -1,12 +1,13 @@
 #!py
 
 import re
+import copy
 
 
-def attributes(attrs, global_vars, consts, indent=1):
+def attributes(attrs, globls, consts, indent=1):
 	"""
 	:attrs   dict
-	:global_vars list
+	:globls list
 	:consts  dict
 	"""
 
@@ -133,8 +134,8 @@ def attributes(attrs, global_vars, consts, indent=1):
 
 		return result
 
-	# global_vars and all keys of attrs dict must not quoted
-	attributes_constants = global_vars + consts.keys() + ['name']
+	# globls and all keys of attrs dict must not quoted
+	attributes_constants = globls + consts.keys() + ['name']
 	# print('attributes_constants: %s' % attributes_constants)
 
 	# select all attributes and constants if their value is a dict
@@ -162,7 +163,7 @@ def attributes(attrs, global_vars, consts, indent=1):
 	return config
 
 
-def icinga2_attributes(args, global_vars=[], constants={}):
+def icinga2_attributes(args, obj_globals=[], obj_constants={}):
 	"""
 	Called from the object template to render icinga2 object properties
 
@@ -176,12 +177,12 @@ def icinga2_attributes(args, global_vars=[], constants={}):
 		indent = 0
 
 	if len(args) > 2:
-		global_vars += args[2]
+		obj_globals += args[2]
 
 	if len(args) > 3:
-		constants.update(args[3])
+		obj_constants.update(args[3])
 
-	return attributes(args[0], global_vars, constants, indent)
+	return attributes(args[0], obj_globals, obj_constants, indent)
 
 
 def icinga2_object(p, icinga2_globals, icinga2_constants):
@@ -264,18 +265,23 @@ def icinga2_object(p, icinga2_globals, icinga2_constants):
 	if import_:
 		content += "\n"
 
+	# Create a copy of the globals and constants because the
+	# values get changed as the object attributes are processed
+	obj_globals = icinga2_globals[:]
+	obj_constants = icinga2_constants.copy()
+
 	if isinstance(apply_, basestring):
 		m = re.search('^([A-Za-z_]+)\s+in\s+.+$', apply_)
 		if m:
 			_1 = m.groups()[0]
-			content += icinga2_attributes([_attrs, 1, attrs_list, {_1: {}}], icinga2_globals, icinga2_constants)
+			content += icinga2_attributes([_attrs, 1, attrs_list, {_1: {}}], obj_globals, obj_constants)
 		else:
 			m = re.search('^([A-Za-z_]+)\s+=>\s+([A-Za-z_]+)\s+in\s+.+$', apply_)
 			if m:
 				_1, _2 = m.groups()
-				content += icinga2_attributes([_attrs, 1, attrs_list + [_1], {_2: {}}], icinga2_globals, icinga2_constants)
+				content += icinga2_attributes([_attrs, 1, attrs_list + [_1], {_2: {}}], obj_globals, obj_constants)
 	else:
-		content += icinga2_attributes([_attrs, 1, attrs_list], icinga2_globals, icinga2_constants)
+		content += icinga2_attributes([_attrs, 1, attrs_list], obj_globals, obj_constants)
 
 	content += '}'
 
