@@ -19,4 +19,4 @@ icinga2_ido_enable:
     - source: salt://icinga2/features/db-ido-mysql/ido-mysql.conf.jinja
     - template: jinja
     - context:
-        settings: {{ icinga2.features.get('ido_mysql') }}
+        db: {{ icinga2.features.get('ido_mysql') }}

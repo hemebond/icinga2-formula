@@ -6,8 +6,8 @@
 library "db_ido_mysql"
 
 object IdoMysqlConnection "ido-mysql" {
-	user = "{{ settings.user }}",
-	password = "{{ settings.password }}",
-	host = "{{ settings.host }}",
-	database = "{{ settings.database }}"
+	user = "{{ db.user }}",
+	password = "{{ db.password }}",
+	host = "{{ db.host }}",
+	database = "{{ db.database }}"
 }

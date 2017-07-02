@@ -35,7 +35,14 @@ icingaweb2-user-{{ username }}:
     - name: echo "INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('{{ username }}', 1, '{{ password_hash|replace('$', '\$') }}');" | psql -v ON_ERROR_STOP=1 --host={{ icinga2.web.db.host }} --dbname={{ icinga2.web.db.name }} --username={{ icinga2.web.db.user }}
     - env:
       - PGPASSWORD: {{ icinga2.web.db.password }}
-    - unless: echo "SELECT * FROM icingaweb_user where name='{{ username }}';" | psql -v ON_ERROR_STOP=1 --host={{ icinga2.web.db.host }} --dbname={{ icinga2.web.db.name }} --username={{ icinga2.web.db.user }} | grep {{ username }}
+    - unless: echo "SELECT name FROM icingaweb_user WHERE name='{{ username }}';" | psql -v ON_ERROR_STOP=1 --host={{ icinga2.web.db.host }} --dbname={{ icinga2.web.db.name }} --username={{ icinga2.web.db.user }} -t | egrep .
+
+icingaweb2-update-user-{{ username }}:
+  cmd.run:
+    - name: echo "UPDATE icingaweb_user SET password_hash='{{ password_hash|replace('$', '\$') }}' WHERE name='{{ username }}';" | psql -v ON_ERROR_STOP=1 --host={{ icinga2.web.db.host }} --dbname={{ icinga2.web.db.name }} --username={{ icinga2.web.db.user }}
+    - env:
+      - PGPASSWORD: {{ icinga2.web.db.password }}
+    - unless: echo "SELECT name FROM icingaweb_user WHERE name='{{ username }}' AND password_hash='{{ password_hash|replace('$', '\$') }}';" | psql -v ON_ERROR_STOP=1 --host={{ icinga2.web.db.host }} --dbname={{ icinga2.web.db.name }} --username={{ icinga2.web.db.user }} -t | egrep .
 {%-   endif %}
 {%- endfor %}
 
