@@ -8,5 +8,5 @@ extend:
   icinga2_api_enable:
     cmd:
       - require:
-        - x509: icinga2_ca_cert_perms
-        - x509: icinga2_client_cert_perms
+        - file: icinga2_ca_cert_perms
+        - file: icinga2_client_cert_perms
