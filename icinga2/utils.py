@@ -4,6 +4,69 @@ import re
 import copy
 
 
+icinga2_globals = [
+	'Acknowledgement',
+	'ApplicationType',
+	'AttachDebugger',
+	'BuildCompilerName',
+	'BuildCompilerVersion',
+	'BuildHostName',
+	'Concurrency',
+	'Critical',
+	'Custom',
+	'Deprecated',
+	'Down',
+	'DowntimeEnd',
+	'DowntimeRemoved',
+	'DowntimeStart',
+	'FlappingEnd',
+	'FlappingStart',
+	'HostDown',
+	'HostUp',
+	'IncludeConfDir',
+	'Internal',
+	'Json',
+	'LocalStateDir',
+	'LogCritical',
+	'LogDebug',
+	'LogInformation',
+	'LogNotice',
+	'LogWarning',
+	'Math',
+	'ModAttrPath',
+	'NodeName',
+	'ObjectsPath',
+	'OK',
+	'PidPath',
+	'PkgDataDir',
+	'PlatformArchitecture',
+	'PlatformKernel',
+	'PlatformKernelVersion',
+	'PlatformName',
+	'PlatformVersion',
+	'PrefixDir',
+	'Problem',
+	'Recovery',
+	'RunAsGroup',
+	'RunAsUser',
+	'RunDir',
+	'ServiceCritical',
+	'ServiceOK',
+	'ServiceUnknown',
+	'ServiceWarning',
+	'StatePath',
+	'SysconfDir',
+	'System',
+	'Types',
+	'Unknown',
+	'Up',
+	'UseVfork',
+	'VarsPath',
+	'Warning',
+	'ZonesDir',
+]
+
+
 def attributes(attrs, globls, consts, indent=1):
 	"""
 	:attrs   dict
@@ -82,6 +145,8 @@ def attributes(attrs, globls, consts, indent=1):
 							if m:
 								_1 = m.groups()[0]
 								result += "(%s" % parse(_1)
+							elif isinstance(row, bool):
+								result += value_types(str(row).lower())
 							else:
 								result += value_types(str(row))
 

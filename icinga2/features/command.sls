@@ -6,4 +6,4 @@ icinga2_command_enable:
     - name: icinga2 feature enable command
     - watch_in:
       - service: icinga2_service
-    - unless: icinga2 feature list | grep Enabled | grep command
+    - unless: icinga2 feature list | grep Enabled | grep -w command

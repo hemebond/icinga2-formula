@@ -12,7 +12,7 @@ icinga2_ido_enable:
       - pkg: icinga2-ido-mysql
     - watch_in:
       - service: icinga2_service
-    - unless: icinga2 feature list | grep Enabled | grep ido-mysql
+    - unless: icinga2 feature list | grep Enabled | grep -w ido-mysql
 
 /etc/icinga2/features-available/ido-mysql.conf:
   file.managed:

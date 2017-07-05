@@ -5,68 +5,6 @@ import yaml
 import imp
 from jinja2 import Environment, Template
 
-icinga2_globals = [
-	'Acknowledgement',
-	'ApplicationType',
-	'AttachDebugger',
-	'BuildCompilerName',
-	'BuildCompilerVersion',
-	'BuildHostName',
-	'Concurrency',
-	'Critical',
-	'Custom',
-	'Deprecated',
-	'Down',
-	'DowntimeEnd',
-	'DowntimeRemoved',
-	'DowntimeStart',
-	'FlappingEnd',
-	'FlappingStart',
-	'HostDown',
-	'HostUp',
-	'IncludeConfDir',
-	'Internal',
-	'Json',
-	'LocalStateDir',
-	'LogCritical',
-	'LogDebug',
-	'LogInformation',
-	'LogNotice',
-	'LogWarning',
-	'Math',
-	'ModAttrPath',
-	'NodeName',
-	'ObjectsPath',
-	'OK',
-	'PidPath',
-	'PkgDataDir',
-	'PlatformArchitecture',
-	'PlatformKernel',
-	'PlatformKernelVersion',
-	'PlatformName',
-	'PlatformVersion',
-	'PrefixDir',
-	'Problem',
-	'Recovery',
-	'RunAsGroup',
-	'RunAsUser',
-	'RunDir',
-	'ServiceCritical',
-	'ServiceOK',
-	'ServiceUnknown',
-	'ServiceWarning',
-	'StatePath',
-	'SysconfDir',
-	'System',
-	'Types',
-	'Unknown',
-	'Up',
-	'UseVfork',
-	'VarsPath',
-	'Warning',
-	'ZonesDir',
-]
-
 
 def run():
 	config = {}
@@ -122,7 +60,7 @@ def run():
 			try:
 				obj_function_name = 'icinga2_object_%s' % obj_type
 				obj_function = getattr(utils, obj_function_name)
-				definition = obj_function(obj_name, obj_info, icinga2_globals, icinga2_constants) + "\n\n"
+				definition = obj_function(obj_name, obj_info, utils.icinga2_globals, icinga2_constants) + "\n\n"
 
 				if obj_info.get('template', False):
 					object_file = object_file_map['template']
@@ -142,6 +80,9 @@ def run():
 				{'group': icinga2['group']},
 				{'mode': 600},
 				{'contents': definitions},
+				{'require': [
+					{'pkg': 'icinga2_pkg'}
+				]},
 				{'watch_in': {
 					'service': 'icinga2_reload'
 				}}

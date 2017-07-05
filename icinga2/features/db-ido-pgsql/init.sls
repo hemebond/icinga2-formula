@@ -14,7 +14,7 @@ icinga2_ido_enable:
       - pkg: icinga2-ido-pgsql
     - watch_in:
       - service: icinga2_service
-    - unless: icinga2 feature list | grep Enabled | grep ido-pgsql
+    - unless: icinga2 feature list | grep Enabled | grep -w ido-pgsql
 
 /etc/icinga2/features-available/ido-pgsql.conf:
   file.managed:
