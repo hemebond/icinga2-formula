@@ -28,6 +28,7 @@ icinga2_ca_key_perms:
     - user: {{icinga2.user}}
     - group: {{icinga2.group}}
     - mode: 600
+    - replace: False
     - watch:
       - x509: icinga2_ca_key
 
@@ -49,6 +50,7 @@ icinga2_ca_cert_perms:
     - user: {{icinga2.user}}
     - group: {{icinga2.group}}
     - mode: 600
+    - replace: False
     - watch:
       - x509: icinga2_ca_cert
 # Create a copy of the ca.crt in the Icinga2 PKI directory

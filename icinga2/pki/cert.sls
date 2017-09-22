@@ -22,6 +22,7 @@ icinga2_client_key_perms:
     - user: {{ icinga2.user }}
     - group: {{ icinga2.group }}
     - mode: 600
+    - replace: False
     - watch:
       - x509: icinga2_client_key
 
@@ -45,5 +46,6 @@ icinga2_client_cert_perms:
     - user: {{ icinga2.user }}
     - group: {{ icinga2.group }}
     - mode: 600
+    - replace: False
     - onchanges:
       - x509: icinga2_client_cert

@@ -94,6 +94,11 @@
 }, merge=kernel) %}
 
 {%- set defaults = salt['defaults.merge']({
+  'features': {
+    'graphite': {
+      'enable_send_thresholds': true
+    }
+  },
   'web': {
     'users': {
       'admin': '$1$PcNxaDqe$4CzgfB.ud.XE.jg37hBXv/',
@@ -136,4 +141,4 @@
   }
 }, os) %}
 
-{%- set icinga2 = salt['defaults.merge'](defaults, salt['pillar.get']('icinga2:lookup')) %}
+{%- set icinga2 = salt.defaults.merge(defaults, salt.pillar.get('icinga2:lookup', {})) %}

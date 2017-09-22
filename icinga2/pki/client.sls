@@ -17,5 +17,6 @@ icinga2_client_master_cert_perms:
     - user: {{ icinga2.user }}
     - group: {{ icinga2.group }}
     - mode: 600
+    - replace: False
     - watch:
       - x509: icinga2_client_master_cert

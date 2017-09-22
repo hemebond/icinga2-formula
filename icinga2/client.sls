@@ -13,3 +13,4 @@ extend:
       - require:
         - file: icinga2_client_master_cert_perms
         - file: icinga2_client_cert_perms
+        - file: icinga2_client_key_perms

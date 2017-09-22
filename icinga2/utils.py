@@ -145,10 +145,17 @@ def attributes(attrs, globls, consts, indent=1):
 							if m:
 								_1 = m.groups()[0]
 								result += "(%s" % parse(_1)
-							elif isinstance(row, bool):
-								result += value_types(str(row).lower())
 							else:
-								result += value_types(str(row))
+								# Lists in rows, e.g.,
+								# assign where host.name in ["foo", "bar"]
+								m = re.search('^\[(.*)\]$', str(row))
+								if m:
+									_1 = m.groups()[0]
+									result += "[ %s]" % ', '.join(map(lambda x: parse(x.lstrip()), _1.split(',')))
+								elif isinstance(row, bool):
+									result += value_types(str(row).lower())
+								else:
+									result += value_types(str(row))
 
 		return result.replace('" in "', ' in ')
 
