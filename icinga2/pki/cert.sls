@@ -1,4 +1,5 @@
 {% from 'icinga2/map.jinja' import icinga2 with context %}
+{% set id   = salt.grains.get('id') %}
 {% set fqdn = salt.grains.get('fqdn') %}
 
 
@@ -36,7 +37,6 @@ icinga2_client_cert:
     - signing_policy: icinga2
     - public_key: {{ icinga2.pki_dir }}/{{ fqdn }}.key
     - CN: {{ fqdn }}
-    # - subjectAltName: {{ fqdn }}
     - backup: True
     - require:
       - x509: icinga2_client_key

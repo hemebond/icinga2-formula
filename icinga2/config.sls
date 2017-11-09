@@ -30,6 +30,9 @@ def run():
 			{'require': [
 				{'pkg': 'icinga2_pkg'}
 			]},
+			{'watch_in': [
+				{'service': 'icinga2_service'}
+			]}
 		]
 	}
 
