@@ -1,9 +1,6 @@
 {%- from 'icinga2/map.jinja' import icinga2 with context -%}
 
 object ApiListener "api" {
-	cert_path = SysconfDir + "/icinga2/pki/" + NodeName + ".crt"
-	key_path = SysconfDir + "/icinga2/pki/" + NodeName + ".key"
-	ca_path = SysconfDir + "/icinga2/pki/ca.crt"
 {#  allow this icinga node to accept commands from the master icinga node #}
 {%- if salt.grains.get('fqdn') != icinga2.master_fqdn %}
 	accept_config = true

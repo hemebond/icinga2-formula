@@ -53,16 +53,6 @@ icinga2_ca_cert_perms:
     - replace: False
     - watch:
       - x509: icinga2_ca_cert
-# Create a copy of the ca.crt in the Icinga2 PKI directory
-icinga2_ca_cert_copy:
-  file.copy:
-    - name: {{ icinga2.pki_dir}}/ca.crt
-    - source: {{icinga2.ca_dir}}/ca.crt
-    - mode: 600
-    - user: {{icinga2.user}}
-    - group: {{icinga2.group}}
-    - require:
-      - file: icinga2_pki_dir
 
 # Save the ca certificate in mine so the minions can collect it
 icinga2_mine_ca_cert:
