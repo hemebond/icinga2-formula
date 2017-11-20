@@ -16,25 +16,19 @@ Available states
 * Configure Icinga2 repository
 * Install Icinga2
 * Configure Icinga2 with a set of defaults
-* Run Icinga2 service
+* Manage Icinga2 service
 
-``icinga.web``
---------------
+``icinga2.web``
+---------------
 
-* Install and configures IcingaWeb2
-* Import database schema
-* Enables Icinga2 features required
+Installs and configures Icingaweb2.
 
-``icinga2.node``
-----------------
+``icinga2.client``
+------------------
 
-* Run pki node
-* Run config
-* Run features
+Installs Icinga2 as a client agent, creating client certificates against an Icinga2 master.
 
 ``icinga2.master``
 ------------------
 
-* Run pki master
-* Run config
-* Run features
+Installs and configures an Icinga2 master with a CA for generating client certs for Icinga2 agents.
