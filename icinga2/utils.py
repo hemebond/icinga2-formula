@@ -113,6 +113,11 @@ def attributes(attrs, globls, consts, indent=1):
 	def parse(row):
 		result = ''
 
+		# parser is disabled
+		m = re.search('^-:(.*)$', str(row), re.S)
+		if m:
+			return m.groups()[0]
+
 		# scan function
 		m = re.search('^\{{2}(.+)\}{2}$', str(row), re.S)
 		if m:

@@ -94,6 +94,14 @@
   'features': {
     'graphite': {
       'enable_send_thresholds': true
+    },
+    'mainlog': {
+      'severity': 'information',
+      'path': 'LocalStateDir + "/log/icinga2/icinga2.log"'
+    },
+    'debuglog': {
+      'severity': "debug",
+      'path': 'LocalStateDir + "/log/icinga2/debug.log"'
     }
   },
   'web': {
