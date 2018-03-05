@@ -52,11 +52,11 @@ def run():
 		'zone': '/zones.conf',
 	}
 
-	# Hold the object definitions for a particular config file
+	# Hold the object definitions (as a string) for each config file
 	compiled_object_definitions = {k: '' for k in object_file_map.values()}
 
-	for obj_type, obj_definitions in configuration.iteritems():
-		for obj_name, obj_info in obj_definitions.iteritems():
+	for obj_type, obj_definitions in iter(sorted(configuration.iteritems())):
+		for obj_name, obj_info in iter(sorted(obj_definitions.iteritems())):
 			try:
 				obj_function_name = 'icinga2_object_%s' % obj_type
 				obj_function = getattr(utils, obj_function_name)
