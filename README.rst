@@ -1,4 +1,4 @@
-===============
+People ===============
 icinga2-formula
 ===============
 
@@ -26,9 +26,9 @@ Installs and configures Icingaweb2.
 ``icinga2.client``
 ------------------
 
-Installs Icinga2 as a client agent, creating client certificates against an Icinga2 master.
+Installs Icinga2 as a client agent, creating client certificates against an Icinga2 master. Requires `permissions for remote signing <https://docs.saltstack.com/en/latest/ref/states/all/salt.states.x509.html>`_.
 
 ``icinga2.master``
 ------------------
 
-Installs and configures an Icinga2 master with a CA for generating client certs for Icinga2 agents.
+Installs and configures an Icinga2 master with a CA for generating client certs for Icinga2 agents. Requires `permissions for remote signing <https://docs.saltstack.com/en/latest/ref/states/all/salt.states.x509.html>`_.

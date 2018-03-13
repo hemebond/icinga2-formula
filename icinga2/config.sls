@@ -26,7 +26,7 @@ def run():
 			{'user': icinga2['user']},
 			{'group': icinga2['group']},
 			{'mode': 600},
-			{'contents': utils.icinga2_attributes([prefixed_constants])},
+			{'contents': utils.icinga2_attributes([prefixed_constants], utils.icinga2_globals)},
 			{'require': [
 				{'pkg': 'icinga2_pkg'}
 			]},

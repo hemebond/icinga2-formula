@@ -14,22 +14,10 @@
     'ido_pgsql_package': 'icinga2-ido-pgsql',
     'ido_mysql_package': 'icinga2-ido-mysql',
     'pki_pkg':           'python-m2crypto',
-    'plugins': [
-      'itl',
-      'plugins'
-    ],
-    'features': {
-      'api': {
-        'ticket_salt': 'TicketSalt',
-      }
-    },
     'constants': {
       'PluginDir':          '/usr/lib/nagios/plugins',
       'PluginContribDir':   '/usr/lib/nagios/plugins',
       'ManubulonPluginDir': '/usr/lib/nagios/plugins',
-      'ZoneName':           salt['grains.get']('fqdn'),
-      'NodeName':           salt['grains.get']('fqdn'),
-      'TicketSalt':         '',
     }
   },
   'Windows': {
@@ -49,9 +37,6 @@
       'PluginDir':          'C:/Program Files/ICINGA2/sbin',
       'PluginContribDir':   'C:/Program Files/ICINGA2/sbin',
       'ManubulonPluginDir': 'C:/Program Files/ICINGA2/sbin',
-      'ZoneName':           salt['grains.get']('fqdn'),
-      'NodeName':           salt['grains.get']('fqdn'),
-      'TicketSalt':         '',
     }
   }
 }, grain='kernel') %}
@@ -91,7 +76,21 @@
 }, merge=kernel) %}
 
 {%- set defaults = salt['defaults.merge']({
+  'constants': {
+    'NodeName':           salt['grains.get']('fqdn'),
+    'ZoneName':           'NodeName',
+    'TicketSalt':         '',
+  },
+  'plugins': [
+    'itl',
+    'plugins',
+    'plugins-contrib',
+    'manubulon',
+  ],
   'features': {
+    'api': {
+      'ticket_salt': 'TicketSalt',
+    },
     'graphite': {
       'enable_send_thresholds': true
     },
