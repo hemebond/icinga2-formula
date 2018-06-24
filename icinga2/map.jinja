@@ -18,6 +18,10 @@
       'PluginDir':          '/usr/lib/nagios/plugins',
       'PluginContribDir':   '/usr/lib/nagios/plugins',
       'ManubulonPluginDir': '/usr/lib/nagios/plugins',
+    },
+    'feature_packages': {
+      'ido-pgsql': 'icinga2-ido-pgsql',
+      'ido-mysql': 'icinga2-ido-mysql',
     }
   },
   'Windows': {
@@ -87,6 +91,16 @@
     'plugins-contrib',
     'manubulon',
   ],
+  'conf': {
+    'zone': {
+      'global-templates': {
+        'global': true
+      },
+      'director-global': {
+        'global': true
+      }
+    }
+  },
   'features': {
     'api': {
       'ticket_salt': 'TicketSalt',

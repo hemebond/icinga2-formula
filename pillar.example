@@ -1,71 +1,57 @@
+#
+# Master Pillar Data
+#
 icinga2:
   lookup:
-    icingaweb2:
-      use_director: true
-      db_user: icingaweb2
-      db_password: icingaweb2
-      db_name: icingaweb2
-      users:
-        root: $apr1$VxiIkiLL$44VZAqDUUsOoW4zns1USw0
-        anotheradmin: $apr1$R9s6cQSW$C5KdQSdm5/1XACnRFMWNO/
-      php_timezone: Europe/Berlin
-
-    pkgs:
-      - nagios-nrpe-plugin
-    nrpe:
-      config:
-        server_port: 5666
-        commands:
-          check_users: /usr/lib/nagios/plugins/check_users -w 5 -c 10
-      defaults:
-        DAEMON_OPTS: "\"--no-ssl\""
-    classicui:
-      users:
-        admin: $apr1$VxiIkiLL$44VZAqDUUsOoW4zns1USw0
-        anotheradmin: $apr1$R9s6cQSW$C5KdQSdm5/1XACnRFMWNO/
-
+    master_fqdn: icinga2master.example.com
+    master_minion_id: icinga2master
+    constants:
+      TicketSalt: randomsaltstring
+    features:
+      api:
+        ca_path: /var/lib/icinga2/ca/ca.crt
+      mainlog:
+        severity: critical
+    plugins:
+      - itl
+      - plugins
+      - plugins-contrib
     conf:
-      templates:
-        special-host:
-          type: Host
-          conf:
-            vars:
-              sla: "24x5"
-        special-downtime:
-          type: ScheduledDowntime
-          conf:
-            ranges:
-              monday: "02:00-03:00"
-        special-notification:
-          type: Notification
-          conf:
-            types:
-              - FlappingStart
-              - FlappingEnd
-      hosts:
-        example.com:
-          import: generic-host
-          address: 1.2.3.4
-          vars:
-            sla: "24x7"
-          services:
-            http:
-              import: generic-service
-              host_name: example.com
-              check_command: http
-              vars:
-                sla: "24x7"
-            ssh:
-              import: generic-service
-              host_name: example.com
-              check_command: ssh
-              vars:
-                sla: "24x7"
-            ssh_alt:
-              import: generic-service
-              host_name: example.com
-              check_command: ssh
-              vars:
-                ssh_port: 43
-                sla: "24x7"
+      apiuser:
+        root:
+          password: apirootpassword
+          permissions:
+            - '*'
 
+
+#
+# Client Pillar Data
+#
+icinga2:
+  lookup:
+    master_fqdn: icinga2master.example.com
+    master_minion_id: icinga2master
+    features:
+      api:
+        accept_config: 'true'
+        accept_commands: 'true'
+        bind_host: '127.0.0.1'
+      mainlog:
+        severity: warning
+    plugins:
+      - itl
+      - plugins
+      - plugins-contrib
+    conf:
+      zone:
+        master:
+          endpoints:
+            - icinga2master.example.com
+        ZoneName:
+          endpoints:
+            - NodeName
+          parent: master
+      endpoint:
+        NodeName: {}
+        icinga2master.example.com
+          host: icinga2master.example.com

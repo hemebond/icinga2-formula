@@ -54,8 +54,8 @@ icingaweb2-update-user-{{ username }}:
     - user: {{ icinga2.web.user }}
     - group: {{ icinga2.web.group }}
     # - dir_mode: 2775
-    - dir_mode:
-    - file_mode: 644
+    # - dir_mode:
+    - file_mode: 640
     - require:
       - pkg: icingaweb2_pkgs
     - context:

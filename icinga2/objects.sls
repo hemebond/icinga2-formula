@@ -29,6 +29,7 @@ def run():
 		with open(defaults_file, 'r') as stream:
 			configuration = yaml.load(stream)
 
+	# Copy the constants dict defined in map.jinja
 	icinga2_constants = icinga2['constants'].copy()
 
 	# This defines in which file we want to store each object type
