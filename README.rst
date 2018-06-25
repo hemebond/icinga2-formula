@@ -39,5 +39,6 @@ Changes
 2018-06-21
 ----------
 Pillar key for IDO features have changed to match the feature name:
-	ido_pgsql => ido-pgsql
-	ido_mysql => ido-mysql
+
+* ido_pgsql > ido-pgsql
+* ido_mysql > ido-mysql

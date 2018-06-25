@@ -22,6 +22,18 @@ icinga2:
           password: apirootpassword
           permissions:
             - '*'
+x509_signing_policies:
+  icinga2:
+    - minions: '*'
+    - signing_private_key: /var/lib/icinga2/ca/ca.key
+    - signing_cert: /var/lib/icinga2/ca/ca.crt
+    - basicConstraints: "critical CA:false"
+    - days_valid: 365
+    - copy_path: /var/lib/icinga2/ca
+mine_functions:
+  icinga2_ca_cert:
+    mine_function: x509.get_pem_entries
+    glob_path: /var/lib/icinga2/ca/ca.crt
 
 
 #
