@@ -7,6 +7,7 @@ import copy
 icinga2_globals = [
 	'Acknowledgement',
 	'ApplicationType',
+	'ApplicationVersion',
 	'AttachDebugger',
 	'BuildCompilerName',
 	'BuildCompilerVersion',

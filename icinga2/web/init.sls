@@ -59,9 +59,9 @@ icingaweb2-update-user-{{ username }}:
     - require:
       - pkg: icingaweb2_pkgs
     - context:
-        icinga2: {{ icinga2 }}
-        icingaweb_db: {{ icinga2.web.db | default({}) }}
-        director_db: {{ icinga2.web.modules.director.db | default({}) }}
+        icinga2: {{ icinga2 | json }}
+        icingaweb_db: {{ icinga2.web.db | default({}) | json }}
+        director_db: {{ icinga2.web.modules.director.db | default({}) | json }}
 
 enable_monitoring_module:
   cmd.run:
