@@ -4,7 +4,6 @@ include:
   - icinga2.features.command
   - icinga2.features.syslog
 
-{%- set config = icinga2.get('web', {}) %}
 
 icingaweb2_pkgs:
   pkg.installed:
@@ -47,6 +46,20 @@ icingaweb2-update-user-{{ username }}:
 {%- endfor %}
 
 
+{%- set icingaweb_db = {} %}
+{%- set director_db = {} %}
+
+{%- if icinga2.web is defined %}
+{%-   set icingaweb_db = icinga2.web.db | default({}) %}
+
+{%-   if icinga2.web.modules is defined %}
+{%-     if icinga2.web.modules.director is defined %}
+{%-       set director_db = icinga2.web.modules.director.db | default({}) %}
+{%-     endif %}
+{%-   endif %}
+{%- endif %}
+
+
 /etc/icingaweb2:
   file.recurse:
     - source: salt://icinga2/files/web
@@ -60,8 +73,8 @@ icingaweb2-update-user-{{ username }}:
       - pkg: icingaweb2_pkgs
     - context:
         icinga2: {{ icinga2 | json }}
-        icingaweb_db: {{ icinga2.web.db | default({}) | json }}
-        director_db: {{ icinga2.web.modules.director.db | default({}) | json }}
+        icingaweb_db: {{ icingaweb_db | json }}
+        director_db: {{ director_db | json }}
 
 enable_monitoring_module:
   cmd.run:

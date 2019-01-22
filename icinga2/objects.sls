@@ -65,6 +65,11 @@ def run():
 
 				if obj_info.get('template', False):
 					object_file = object_file_map['template']
+				elif obj_type in ['checkcommand', 'eventcommand'] and obj_info.get('global', False):
+					object_file = '/zones.d/global-templates/commands.conf'
+
+					if object_file not in compiled_object_definitions:
+						compiled_object_definitions[object_file] = ''
 				else:
 					object_file = object_file_map[obj_type]
 
