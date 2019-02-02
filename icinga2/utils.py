@@ -852,3 +852,21 @@ def icinga2_object_zone(name, p, icinga2_globals, icinga2_constants):
 		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
 		'attrs_list':  attrs.keys(),
 	}, icinga2_globals, icinga2_constants)
+
+def icinga2_object_icingaapplication(name, p, icinga2_globals, icinga2_constants):
+	attrs = {
+		'enable_notifications': p.get('enable_notifications', None),
+		'enable_event_handlers': p.get('enable_event_handlers', None),
+		'enable_flapping': p.get('enable_flapping', None),
+		'enable_host_checks': p.get('enable_host_checks', None),
+		'enable_service_checks': p.get('enable_service_checks', None),
+		'enable_perfdata': p.get('enable_perfdata', None),
+		'vars': p.get('vars', None),
+		'environment': p.get('environment', None),
+	}
+	return icinga2_object({
+		'object_name': name,
+		'object_type': 'IcingaApplication',
+		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
+		'attrs_list':  attrs.keys(),
+	}, icinga2_globals, icinga2_constants)

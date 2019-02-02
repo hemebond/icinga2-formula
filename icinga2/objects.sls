@@ -35,6 +35,7 @@ def run():
 	# This defines in which file we want to store each object type
 	object_file_map = {
 		'apiuser': '/conf.d/api-users.conf',
+		'icingaapplication': '/conf.d/app.conf',
 		'checkcommand': '/conf.d/commands.conf',
 		'dependency': '/conf.d/dependencies.conf',
 		'endpoint': '/zones.conf',
@@ -82,9 +83,9 @@ def run():
 	for filename, definitions in compiled_object_definitions.iteritems():
 		config[icinga2['conf_dir'] + filename] = {
 			'file.managed': [
-				{'user': icinga2['user']},
-				{'group': icinga2['group']},
-				{'mode': 600},
+				{'user': 'root'},
+				{'group': 'root'},
+				{'mode': 644},
 				{'contents': definitions},
 				{'require': [
 					{'pkg': 'icinga2_pkg'}

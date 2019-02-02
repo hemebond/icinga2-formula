@@ -1,5 +1,6 @@
 #!py
 
+from textwrap import dedent
 import imp
 from jinja2 import Environment, Template
 
@@ -23,9 +24,9 @@ def run():
 
 	config[icinga2['conf_dir'] + '/constants.conf'] = {
 		'file.managed': [
-			{'user': icinga2['user']},
-			{'group': icinga2['group']},
-			{'mode': 600},
+			{'user': 'root'},
+			{'group': 'root'},
+			{'mode': 644},
 			{'contents': utils.icinga2_attributes([prefixed_constants], utils.icinga2_globals)},
 			{'require': [
 				{'pkg': 'icinga2_pkg'}
@@ -38,9 +39,9 @@ def run():
 
 	config[icinga2['conf_dir'] + '/icinga2.conf'] = {
 		'file.managed': [
-			{'user': icinga2['user']},
-			{'group': icinga2['group']},
-			{'mode': 600},
+			{'user': 'root'},
+			{'group': 'root'},
+			{'mode': 644},
 			{'source': 'salt://icinga2/files/icinga2.conf.jinja'},
 			{'template': 'jinja'},
 			{'context': {
@@ -54,5 +55,40 @@ def run():
 			}}
 		]
 	}
+
+	if icinga2.viewkeys() & {'RunAsUser', 'RunAsGroup'}:
+		init_conf_contents = dedent('''\
+		/**
+		 * This file is read by Icinga 2 before the main
+		 * configuration file (icinga2.conf) is processed.
+		 */
+
+		''')
+
+		init_conf_contents += utils.icinga2_attributes(
+			[
+				{
+					'const RunAsUser': icinga2['RunAsUser'],
+					'const RunAsGroup': icinga2['RunAsGroup']
+				}
+			],
+			utils.icinga2_globals
+		)
+
+		config[icinga2['conf_dir'] + '/init.conf'] = {
+			'file.managed': [
+				{'user': 'root'},
+				{'group': 'root'},
+				{'mode': 644},
+				{'contents': init_conf_contents},
+				{'template': 'jinja'},
+				{'require': [
+					{'pkg': 'icinga2_pkg'}
+				]},
+				{'watch_in': {
+					'service': 'icinga2_service'
+				}}
+			]
+		}
 
 	return config
