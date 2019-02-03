@@ -16,7 +16,7 @@ icinga2_ido_enable:
 
 /etc/icinga2/features-available/ido-mysql.conf:
   file.managed:
-    - source: salt://icinga2/features/db-ido-mysql/ido-mysql.conf.jinja
+    - source: salt://icinga2/features/ido-mysql/ido-mysql.conf.jinja
     - template: jinja
     - context:
         db: {{ icinga2.features.get('ido_mysql') }}

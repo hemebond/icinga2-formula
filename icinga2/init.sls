@@ -4,9 +4,9 @@ include:
   - icinga2.config
   - icinga2.objects
 {%- if 'ido_pgsql' in icinga2.features %}
-  - icinga2.features.db-ido-pgsql
+  - icinga2.features.ido-pgsql
 {%- elif 'ido_mysql' in icinga2.features %}
-  - icinga2.features.db-ido-mysql
+  - icinga2.features.ido-mysql
 {%- endif %}
 {%- if 'api' in icinga2.features %}
   - icinga2.features.api

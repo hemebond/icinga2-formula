@@ -32,17 +32,6 @@ Installs Icinga2 as a client agent, creating client certificates against an Icin
         master_minion_id: icinga
         constants:
           PluginContribDir: /usr/local/lib/monitoring-plugins
-        features:
-          # Make sure the API on clients/agents
-          # is only accessible to localhost
-          api:
-            accept_config: true
-            accept_commands: true
-            bind_host: '127.0.0.1'
-          # Reduce the logging level from
-          # information to warning
-          mainlog:
-            severity: warning
         conf:
           zone:
             master:
@@ -60,7 +49,7 @@ Installs Icinga2 as a client agent, creating client certificates against an Icin
             NodeName: {}
             icinga.example.com:
               host: icinga.example.com
-    
+
 
 ``icinga2.features.api``
 ------------------------
@@ -76,7 +65,7 @@ Enable and configure the ``api`` feature.
           api:
             ca_path: /var/lib/icinga2/ca/ca.crt
 
-``icinga2.features.db-ido-pgsql``
+``icinga2.features.ido-pgsql``
 ---------------------------------
 
 Enables and configures the ``ido-pgsql`` feature.
@@ -93,7 +82,7 @@ Enables and configures the ``ido-pgsql`` feature.
             name: icinga
             user: root
             password: password
-    
+
 ``icinga2.features.debuglog``
 -----------------------------
 
@@ -122,7 +111,7 @@ Enable and configure the ``graphite`` feature.
           graphite:
             enable_send_thresholds: True
             enable_send_metadata: True
-    
+
 ``icinga2.features.mainlog``
 ----------------------------
 
@@ -169,14 +158,14 @@ Installs and configures Icingaweb2.
         web:
           user: www-data
           group: icingaweb2
-    
+
           global:
             show_stacktraces: 1
-    
+
           logging:
             log: syslog
             level: ERROR
-    
+
           db:
             host: localhost
             port: 5432
@@ -187,6 +176,8 @@ Installs and configures Icingaweb2.
 
 ``icinga2.web.modules.audit``
 -----------------------------
+
+Enable the Icingaweb2 audit module.
 
 Changes
 =======
