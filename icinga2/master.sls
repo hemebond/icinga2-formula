@@ -3,6 +3,7 @@ include:
   - icinga2.pki.ca
   - icinga2.pki.cert
   - icinga2.config
+  - icinga2.objects
   - icinga2.features.api
 
 extend:

@@ -1,17 +1,5 @@
 {% from "icinga2/map.jinja" import icinga2 with context %}
 
-include:
-  - icinga2.config
-  - icinga2.objects
-{%- if 'ido_pgsql' in icinga2.features %}
-  - icinga2.features.ido-pgsql
-{%- elif 'ido_mysql' in icinga2.features %}
-  - icinga2.features.ido-mysql
-{%- endif %}
-{%- if 'api' in icinga2.features %}
-  - icinga2.features.api
-{%- endif %}
-
 
 {%- if grains['os'] == 'Debian' %}
 # This repository also requires Debian Backports repository
