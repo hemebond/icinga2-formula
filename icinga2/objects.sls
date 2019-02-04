@@ -91,7 +91,7 @@ def run():
 					{'pkg': 'icinga2_pkg'}
 				]},
 				{'watch_in': {
-					'service': 'icinga2_reload'
+					'service': 'icinga2_service'
 				}}
 			]
 		}
