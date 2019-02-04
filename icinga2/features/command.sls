@@ -1,6 +1,3 @@
-include:
-  - icinga2
-
 icinga2_command_enable:
   cmd.run:
     - name: icinga2 feature enable command
