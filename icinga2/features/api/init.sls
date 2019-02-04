@@ -20,9 +20,9 @@ def run():
 
   config[icinga2['conf_dir'] + '/features-available/api.conf'] = {
     'file.managed': [
-      {'user': icinga2['user']},
-      {'group': icinga2['group']},
-      {'mode': 600},
+      {'user': 'root'},
+      {'group': 'root'},
+      {'mode': 644},
       {'contents': utils.icinga2_object(
         {
           "object_name": "api",

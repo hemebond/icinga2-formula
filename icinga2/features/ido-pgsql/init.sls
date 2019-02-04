@@ -40,9 +40,9 @@ def run():
 
 	config[icinga2['conf_dir'] + '/features-available/' + ffile] = {
 		'file.managed': [
-			{'user': icinga2['user']},
-			{'group': icinga2['group']},
-			{'mode': 600},
+			{'user': 'root'},
+			{'group': 'root'},
+			{'mode': 644},
 			{'contents': 'library "db_ido_pgsql"\n\n' + utils.icinga2_object(
 				{
 					"object_name": fname,

@@ -68,8 +68,8 @@ def run():
 		init_conf_contents += utils.icinga2_attributes(
 			[
 				{
-					'const RunAsUser': icinga2['RunAsUser'],
-					'const RunAsGroup': icinga2['RunAsGroup']
+					'const RunAsUser': icinga2['user'],
+					'const RunAsGroup': icinga2['group']
 				}
 			],
 			utils.icinga2_globals

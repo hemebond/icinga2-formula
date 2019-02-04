@@ -36,9 +36,9 @@ def run():
 
 	config[icinga2['conf_dir'] + '/features-available/graphite.conf'] = {
 		'file.managed': [
-			{'user': icinga2['user']},
-			{'group': icinga2['group']},
-			{'mode': 600},
+			{'user': 'root'},
+			{'group': 'root'},
+			{'mode': 644},
 			{'contents': contents},
 			{'require': [
 				{'pkg': 'icinga2_pkg'}
