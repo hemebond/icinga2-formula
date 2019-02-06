@@ -179,6 +179,20 @@ Installs and configures Icingaweb2.
 
 Enable the Icingaweb2 audit module.
 
+``icinga2.web.modules.businessprocess``
+---------------------------------------
+
+Enable the Icingaweb2 ``businessprocess`` module.
+
+.. code-block:: yaml
+
+    # Extend the state to specify
+    # a particular version/tag
+    extend:
+      icingaweb2_businessprocess_module_dir:
+        git.latest:
+          - rev: v2.1.0
+
 Changes
 =======
 

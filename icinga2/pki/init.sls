@@ -1,8 +1,5 @@
 {% from 'icinga2/map.jinja' import icinga2 with context %}
 
-include:
-  - icinga2
-
 # Install python-m2crypto dependency
 {{icinga2.pki_pkg}}:
   pkg.installed:
