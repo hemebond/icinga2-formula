@@ -4,6 +4,7 @@ include:
   - icinga2
   - icinga2.pki.client
   - icinga2.config
+  - icinga2.objects
   - icinga2.features.api
   - icinga2.features.mainlog
 
