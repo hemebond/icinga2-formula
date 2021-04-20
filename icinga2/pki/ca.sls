@@ -42,6 +42,7 @@ icinga2_ca_cert:
     - basicConstraints: "critical CA:true"
     - days_valid: 3650
     - backup: True
+    - public_key_passphrase: ""
     - require:
       - x509: icinga2_ca_key
 icinga2_ca_cert_perms:

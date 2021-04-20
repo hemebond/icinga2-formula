@@ -38,6 +38,7 @@ icinga2_client_cert:
     - public_key: {{ icinga2.pki_dir }}/{{ fqdn }}.key
     - CN: {{ fqdn }}
     - backup: True
+    - public_key_passphrase: ''
     - require:
       - x509: icinga2_client_key
 icinga2_client_cert_perms:

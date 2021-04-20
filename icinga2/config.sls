@@ -20,7 +20,7 @@ def run():
 	icinga2 = map_mod.icinga2
 
 	# Prefix each key in the constants dict with "const "
-	prefixed_constants = {'const {}'.format(k):v for k, v in icinga2['constants'].iteritems()}
+	prefixed_constants = {'const {}'.format(k):v for k, v in icinga2['constants'].items()}
 
 	config[icinga2['conf_dir'] + '/constants.conf'] = {
 		'file.managed': [
@@ -56,7 +56,7 @@ def run():
 		]
 	}
 
-	if icinga2.viewkeys() & {'RunAsUser', 'RunAsGroup'}:
+	if icinga2.keys() & {'RunAsUser', 'RunAsGroup'}:
 		init_conf_contents = dedent('''\
 		/**
 		 * This file is read by Icinga 2 before the main

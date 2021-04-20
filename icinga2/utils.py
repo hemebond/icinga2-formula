@@ -140,12 +140,12 @@ def attributes(attrs, globls, consts, indent=1):
 					m = re.search('^(.+)\((.*)$', str(row))
 					if m:
 						_1, _2 = m.groups()
-						result += "%s(%s" % (_1, ', '.join(map(lambda x: parse(x.lstrip()), _2.split(','))))
+						result += "%s(%s" % (_1, ', '.join([parse(x.lstrip()) for x in _2.split(',')]))
 					else:
 						m = re.search('^(.*)\)$', str(row))
 						if m:
 							_1 = m.groups()[0]
-							result += "%s)" % ', '.join(map(lambda x: parse(x.lstrip()), _1.split(',')))
+							result += "%s)" % ', '.join([parse(x.lstrip()) for x in _1.split(',')])
 						else:
 							m = re.search('^\((.*)$', str(row))
 							if m:
@@ -157,7 +157,7 @@ def attributes(attrs, globls, consts, indent=1):
 								m = re.search('^\[(.*)\]$', str(row))
 								if m:
 									_1 = m.groups()[0]
-									result += "[ %s]" % ', '.join(map(lambda x: parse(x.lstrip()), _1.split(',')))
+									result += "[ %s]" % ', '.join([parse(x.lstrip()) for x in _1.split(',')])
 								elif isinstance(row, bool):
 									result += value_types(str(row).lower())
 								else:
@@ -184,7 +184,7 @@ def attributes(attrs, globls, consts, indent=1):
 		if prefix is None:
 			prefix = "\t" * indent
 
-		for attr, value in attrs.items():
+		for attr, value in list(attrs.items()):
 			if isinstance(value, dict):
 				if not value:
 					result = {
@@ -213,17 +213,17 @@ def attributes(attrs, globls, consts, indent=1):
 		return result
 
 	# globls and all keys of attrs dict must not quoted
-	attributes_constants = globls + consts.keys() + ['name']
+	attributes_constants = globls + list(consts.keys()) + ['name']
 	# print('attributes_constants: %s' % attributes_constants)
 
 	# select all attributes and constants if their value is a dict
-	dict_attrs  = [key for key, val in attrs.iteritems() if isinstance(val, dict)]
-	dict_attrs += [key for key, val in consts.iteritems() if isinstance(val, dict)]
+	dict_attrs  = [key for key, val in attrs.items() if isinstance(val, dict)]
+	dict_attrs += [key for key, val in consts.items() if isinstance(val, dict)]
 
 	# initialize returned configuration
 	config = ''
 
-	for attr, value in attrs.items():
+	for attr, value in list(attrs.items()):
 		if re.search('^(assign|ignore) where$', attr):
 			for x in value:
 				config += "%s%s %s\n" % ("\t" * indent, attr, parse(x))
@@ -306,7 +306,7 @@ def icinga2_object(p, icinga2_globals, icinga2_constants):
 	# content will be a string with the Icinga2 config definition
 	content = ""
 
-	if isinstance(apply_, basestring):
+	if isinstance(apply_, str):
 		content += "apply %s" % object_type
 
 		if prefix:
@@ -327,7 +327,7 @@ def icinga2_object(p, icinga2_globals, icinga2_constants):
 
 		content += " %s" % object_type
 
-		if object_name in icinga2_constants.keys():
+		if object_name in list(icinga2_constants.keys()):
 			content += " %s" % object_name
 		else:
 			content += " \"%s\" " % object_name
@@ -348,7 +348,7 @@ def icinga2_object(p, icinga2_globals, icinga2_constants):
 	obj_globals = icinga2_globals[:]
 	obj_constants = icinga2_constants.copy()
 
-	if isinstance(apply_, basestring):
+	if isinstance(apply_, str):
 		m = re.search('^([A-Za-z_]+)\s+in\s+.+$', apply_)
 		if m:
 			_1 = m.groups()[0]
@@ -387,8 +387,8 @@ def icinga2_object_apiuser(name, p, icinga2_globals, icinga2_constants):
 	return icinga2_object({
 		'object_name': name,
 		'object_type': 'ApiUser',
-		'attrs': dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list': attrs.keys(),
+		'attrs': dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list': list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 
@@ -407,8 +407,8 @@ def icinga2_object_checkcommand(name, p, icinga2_globals, icinga2_constants):
 		'object_type': 'CheckCommand',
 		'template':    p.get('template', False),
 		'import':      p.get('import', ['plugin-check-command']),
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 
@@ -431,8 +431,8 @@ def icinga2_object_dependency(name, p, icinga2_globals, icinga2_constants):
 		'object_type':  'Dependency',
 		'import':       p.get('import', []),
 		'template':     p.get('template', False),
-		'attrs':        dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':   attrs.keys(),
+		'attrs':        dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':   list(attrs.keys()),
 		'apply':        p.get('apply', False),
 		'prefix':       p.get('prefix', False),
 		'apply_target': p.get('apply_target', 'Host'),
@@ -452,8 +452,8 @@ def icinga2_object_endpoint(name, p, icinga2_globals, icinga2_constants):
 	return icinga2_object({
 		'object_name': name,
 		'object_type': 'Endpoint',
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 
@@ -472,8 +472,8 @@ def icinga2_object_eventcommand(name, p, icinga2_globals, icinga2_constants):
 		'object_name': name,
 		'object_type': 'EventCommand',
 		'import':      p.get('import', ['plugin-event-command']),
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 
@@ -545,8 +545,8 @@ def icinga2_object_host(name, p, icinga2_globals, icinga2_constants):
 	}
 
 	return icinga2_object({
-		'attrs': dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list': attrs.keys(),
+		'attrs': dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list': list(attrs.keys()),
 		'import': p.get('import', []),
 		'object_name': name,
 		'object_type': 'Host',
@@ -565,8 +565,8 @@ def icinga2_object_hostgroup(name, p, icinga2_globals, icinga2_constants):
 	return icinga2_object({
 		'object_name': name,
 		'object_type': 'HostGroup',
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 		'assign':      p.get('assign', []),
 		'ignore':      p.get('ignore', []),
 	}, icinga2_globals, icinga2_constants)
@@ -595,8 +595,8 @@ def icinga2_object_notification(name, p, icinga2_globals, icinga2_constants):
 		'object_type':  'Notification',
 		'import':       p.get('import', []),
 		'template':     p.get('template', False),
-		'attrs':        dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':   attrs.keys(),
+		'attrs':        dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':   list(attrs.keys()),
 		'apply':        p.get('apply', False),
 		'prefix':       p.get('prefix', False),
 		'apply_target': p.get('apply_target', None),
@@ -620,8 +620,8 @@ def icinga2_object_notificationcommand(name, p, icinga2_globals, icinga2_constan
 		'object_type': 'NotificationCommand',
 		'template':    p.get('template', False),
 		'import':      p.get('import', ['plugin-notification-command']),
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 
@@ -640,8 +640,8 @@ def icinga2_object_scheduleddowntime(name, p, icinga2_globals, icinga2_constants
 	return icinga2_object({
 		'object_name':  name,
 		'object_type':  'ScheduledDowntime',
-		'attrs':        dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':   attrs.keys(),
+		'attrs':        dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':   list(attrs.keys()),
 		'apply':        p.get('apply', False),
 		'prefix':       p.get('prefix', False),
 		'apply_target': p.get('apply_target', 'Host'),
@@ -724,8 +724,8 @@ def icinga2_object_service(name, p, icinga2_globals, icinga2_constants):
 		'apply':        p.get('apply', False),
 		'apply_target': 'Host',
 		'assign':       p.get('assign', []),
-		'attrs':        dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':   attrs.keys(),
+		'attrs':        dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':   list(attrs.keys()),
 		'ignore':       p.get('ignore', []),
 		'import':       p.get('import', []),
 		'object_name':  p.get('name', name),
@@ -747,8 +747,8 @@ def icinga2_object_servicegroup(name, p, icinga2_globals, icinga2_constants):
 		'object_type':  'ServiceGroup',
 		'import':       p.get('import', []),
 		'template':     p.get('template', False),
-		'attrs':        dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':   attrs.keys(),
+		'attrs':        dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':   list(attrs.keys()),
 		'assign':       p.get('assign', []),
 		'ignore':       p.get('ignore', []),
 	}, icinga2_globals, icinga2_constants)
@@ -769,8 +769,8 @@ def icinga2_object_timeperiod(name, p, icinga2_globals, icinga2_constants):
 		'object_type': 'TimePeriod',
 		'template':    p.get('template', False),
 		'import':      p.get('import', ['legacy-timeperiod']),
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 
@@ -806,8 +806,8 @@ def icinga2_object_user(name, p, icinga2_globals, icinga2_constants):
 	}
 
 	return icinga2_object({
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 		'import':      p.get('import', []),
 		'object_name': name,
 		'object_type': 'User',
@@ -827,8 +827,8 @@ def icinga2_object_usergroup(name, p, icinga2_globals, icinga2_constants):
 		'object_type': 'UserGroup',
 		'import':      p.get('import', []),
 		'template':    p.get('template', False),
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 		'assign':      p.get('assign', []),
 		'ignore':      p.get('ignore', []),
 	}, icinga2_globals, icinga2_constants)
@@ -849,8 +849,8 @@ def icinga2_object_zone(name, p, icinga2_globals, icinga2_constants):
 	return icinga2_object({
 		'object_name': name,
 		'object_type': 'Zone',
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
 
 def icinga2_object_icingaapplication(name, p, icinga2_globals, icinga2_constants):
@@ -867,6 +867,6 @@ def icinga2_object_icingaapplication(name, p, icinga2_globals, icinga2_constants
 	return icinga2_object({
 		'object_name': name,
 		'object_type': 'IcingaApplication',
-		'attrs':       dict((x, y) for x, y in attrs.iteritems() if y is not None),
-		'attrs_list':  attrs.keys(),
+		'attrs':       dict((x, y) for x, y in attrs.items() if y is not None),
+		'attrs_list':  list(attrs.keys()),
 	}, icinga2_globals, icinga2_constants)
