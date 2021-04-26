@@ -40,6 +40,8 @@ icinga2_client_cert:
     - backup: True
     - require:
       - x509: icinga2_client_key
+    - unless:
+      - ls {{ icinga2.pki_dir }}/{{ fqdn }}.crt
 icinga2_client_cert_perms:
   file.managed:
     - name: {{ icinga2.pki_dir }}/{{ fqdn }}.crt

@@ -44,6 +44,8 @@ icinga2_ca_cert:
     - backup: True
     - require:
       - x509: icinga2_ca_key
+    - unless:
+      - ls {{icinga2.ca_dir}}/ca.crt
 icinga2_ca_cert_perms:
   file.managed:
     - name: {{icinga2.ca_dir}}/ca.crt
@@ -55,7 +57,16 @@ icinga2_ca_cert_perms:
       - x509: icinga2_ca_cert
 
 # Save the ca certificate in mine so the minions can collect it
-icinga2_mine_ca_cert:
+##icinga2_mine_ca_cert:
+##  module.run:
+##    - name: mine.send
+##    - m_name: icinga2_ca_cert
+##    - func: x509.get_pem_entries
+##    - kwargs:
+##        glob_path: {{icinga2.ca_dir}}/ca.crt
+##    - onchanges:
+##      - x509: icinga2_ca_cert
+mine.send.icinga2_mine_ca_cert:
   module.run:
     - name: mine.send
     - m_name: icinga2_ca_cert
@@ -68,15 +79,16 @@ icinga2_mine_ca_cert:
 
 
 
-/etc/salt/minion.d/signing_policies.conf:
-  file.managed:
-    - source: salt://icinga2/pki/signing_policies.conf
-    - template: jinja
-    - require:
-      - x509: icinga2_ca_cert
-icinga2_restart_ca_minion:
-  service.running:
-    - name: salt-minion
-    - enable: True
-    - listen:
-      - file: /etc/salt/minion.d/signing_policies.conf
+#/etc/salt/minion.d/signing_policies.conf:
+#  file.managed:
+#    - source: salt://icinga2/pki/signing_policies.conf
+#    - template: jinja
+#    - require:
+#      - x509: icinga2_ca_cert
+
+#icinga2_restart_ca_minion:
+#  service.running:
+#    - name: salt-minion
+#    - enable: True
+#    - listen:
+#      - file: /etc/salt/minion.d/signing_policies.conf
