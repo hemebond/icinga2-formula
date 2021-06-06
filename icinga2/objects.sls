@@ -55,10 +55,10 @@ def run():
 	}
 
 	# Hold the object definitions (as a string) for each config file
-	compiled_object_definitions = {k: '' for k in object_file_map.values()}
+	compiled_object_definitions = {k: '' for k in list(object_file_map.values())}
 
-	for obj_type, obj_definitions in iter(sorted(configuration.iteritems())):
-		for obj_name, obj_info in iter(sorted(obj_definitions.iteritems())):
+	for obj_type, obj_definitions in iter(sorted(configuration.items())):
+		for obj_name, obj_info in iter(sorted(obj_definitions.items())):
 			try:
 				obj_function_name = 'icinga2_object_%s' % obj_type
 				obj_function = getattr(utils, obj_function_name)
@@ -76,11 +76,11 @@ def run():
 
 				compiled_object_definitions[object_file] += definition
 			except KeyError as e:
-				print('No function found for %s' % obj_type)
+				print(('No function found for %s' % obj_type))
 				print(e)
 
 	# Create the states for each file
-	for filename, definitions in compiled_object_definitions.iteritems():
+	for filename, definitions in compiled_object_definitions.items():
 		config[icinga2['conf_dir'] + filename] = {
 			'file.managed': [
 				{'user': 'root'},
